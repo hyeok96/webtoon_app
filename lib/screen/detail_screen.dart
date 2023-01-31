@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:webtoon_app/models/webtoon_detail_model.dart';
+import 'package:webtoon_app/models/webtoon_episode_model.dart';
+import 'package:webtoon_app/service/api_service.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   final String title, thumb, id;
 
   const DetailScreen({
@@ -11,6 +14,21 @@ class DetailScreen extends StatelessWidget {
   });
 
   @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  late Future<webtoonDetailModel> webtoon;
+  late Future<List<WebtoonEpisodeModel>> episodes;
+
+  @override
+  void initState() {
+    super.initState();
+    webtoon = apiService.getToonById(widget.id);
+    episodes = apiService.getLatestEpisodesById(widget.id);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -19,7 +37,7 @@ class DetailScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
         title: Text(
-          title,
+          widget.title,
           style: const TextStyle(
             fontSize: 24,
           ),
@@ -34,7 +52,7 @@ class DetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Hero(
-                tag: id,
+                tag: widget.id,
                 child: Container(
                   width: 250,
                   decoration: BoxDecoration(
@@ -47,7 +65,7 @@ class DetailScreen extends StatelessWidget {
                         )
                       ]),
                   clipBehavior: Clip.hardEdge,
-                  child: Image.network(thumb),
+                  child: Image.network(widget.thumb),
                 ),
               ),
             ],
